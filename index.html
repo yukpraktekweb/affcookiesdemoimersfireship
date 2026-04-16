@@ -863,6 +863,8 @@
                                     </div>
                                 </div>
                             </div>
+                                </div>
+                            </div>
                     <div id="content-system-settings" class="content-section hidden space-y-8 max-w-4xl">
     <div class="glass rounded-3xl shadow-xl p-8 border border-white/40 dark:border-slate-700/50">
         <h3 class="text-xl font-black text-slate-800 dark:text-white mb-6 border-b border-white/40 dark:border-slate-700/50 pb-4 flex items-center gap-2">
@@ -1552,9 +1554,9 @@
             let durationDays = 30;
             try {
                 const sysRes = await apiCall('getSystemSettings');
-                if (sysRes.success && sysRes.data.AFFILIATE_COOKIE_DAYS) {
-                    durationDays = parseInt(sysRes.data.AFFILIATE_COOKIE_DAYS);
-                }
+                if (sysRes.success && sysRes.data.AFFILIATE_COOKIE_DURATION) {
+                durationDays = parseInt(sysRes.data.AFFILIATE_COOKIE_DURATION);
+            }
             } catch (e) { console.warn("Pake default cookie 30 hari"); }
 
             const expiry = now + (durationDays * 24 * 60 * 60 * 1000);
@@ -1976,7 +1978,7 @@
         window.location.reload();
     };
 
-    // --- NAVIGATION & UI LOGIC ---
+// --- NAVIGATION & UI LOGIC (FIXED) ---
     window.navigate = (targetId) => {
         document.querySelectorAll('.nav-link').forEach(link => {
             if(link.dataset.target === targetId) {
@@ -2009,6 +2011,14 @@
         document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
         const targetEl = document.getElementById('content-' + targetId);
         if (targetEl) targetEl.classList.remove('hidden');
+
+        // --- INI KUNCINYA BIAR GAK BLANK ---
+        if (targetId === 'system-settings') {
+            if (typeof window.renderSystemSettings === 'function') {
+                window.renderSystemSettings();
+            }
+        }
+        // -----------------------------------
 
         if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
             window.toggleMobileMenu();
@@ -3590,13 +3600,12 @@
     }
 };
     window.saveSystemSettings = async () => {
-    const btn = document.getElementById('btnSaveSys'); // Pastikan tombol lo punya ID ini
+    const btn = document.getElementById('btnSaveSys'); 
     if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Saving...';
     }
 
-    // Payload harus menggunakan KEY yang sama dengan Kolom A di Google Sheet
     const payload = {
         KODE_UNIK_MODE: document.getElementById('sysUniqueMode').value,
         KODE_UNIK_MAX: document.getElementById('sysUniqueMax').value,
@@ -3608,7 +3617,7 @@
         const res = await apiCall('saveSystemSettings', payload);
         if (res.success) {
             window.showToast("Konfigurasi sistem berhasil disimpan!", "success");
-            window.appState.systemSettings = payload; // Simpan ke state lokal
+            window.appState.systemSettings = payload; 
         } else {
             window.showToast(res.error || "Gagal menyimpan", "error");
         }
