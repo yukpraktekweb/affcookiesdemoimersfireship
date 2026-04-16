@@ -1644,7 +1644,7 @@
         if (userLicenseCodeEl) userLicenseCodeEl.innerText = user.license || 'TIDAK-ADA-LISENSI';
         
         if (user.role === 'user') {
-            document.querySelectorAll('[data-target="products"], [data-target="orders"], [data-target="coupons"], [data-target="users"], [data-target="broadcast"], [data-target="templates"], [data-target="settings"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[data-target="products"], [data-target="orders"], [data-target="coupons"], [data-target="users"], [data-target="broadcast"], [data-target="templates"], [data-target="settings"], [data-target="system-settings"]').forEach(el => el.classList.add('hidden'));
         }
 
         if (user.role !== 'admin') {
