@@ -3563,19 +3563,31 @@
 
     // --- LOGIKA BARU: SYSTEM SETTINGS (KONTROL PANEL) ---
     window.renderSystemSettings = () => {
-    const config = window.appState.systemSettings || {};
-    
-    const modeEl = document.getElementById('sysUniqueMode');
-    if (modeEl) modeEl.value = config.KODE_UNIK_MODE || 'KURANG';
-    
-    const maxEl = document.getElementById('sysUniqueMax');
-    if (maxEl) maxEl.value = config.KODE_UNIK_MAX || '500';
-    
-    const affLockEl = document.getElementById('sysAffLock');
-    if (affLockEl) affLockEl.value = config.AFFILIATE_LOCK || 'TRUE';
-    
-    const affCookieEl = document.getElementById('sysCookieDays');
-    if (affCookieEl) affCookieEl.value = config.AFFILIATE_COOKIE_DURATION || '30';
+    try {
+        // Ambil data dari state. Jika kosong, gunakan default agar tidak crash.
+        const config = window.appState.systemSettings || {};
+        
+        console.log("Rendering System Settings with data:", config); // Cek di console F12
+
+        const elements = {
+            'sysUniqueMode': config.KODE_UNIK_MODE || 'TAMBAH',
+            'sysUniqueMax': config.KODE_UNIK_MAX || '500',
+            'sysAffLock': config.AFFILIATE_LOCK || 'TRUE',
+            'sysCookieDays': config.AFFILIATE_COOKIE_DURATION || '30'
+        };
+
+        // Looping untuk isi data ke input secara aman
+        for (const [id, value] of Object.entries(elements)) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = value;
+            } else {
+                console.warn(`Elemen dengan ID ${id} tidak ditemukan di HTML!`);
+            }
+        }
+    } catch (error) {
+        console.error("Gagal render System Settings:", error);
+    }
 };
     window.saveSystemSettings = async () => {
         const btn = document.getElementById('btnSaveSys');
