@@ -1689,6 +1689,9 @@
             if (setRes.data && !Array.isArray(setRes.data)) {
                 window.appState.settings = setRes.data;
             }
+            if (sysRes && sysRes.data) {
+                window.appState.systemSettings = sysRes.data;
+            }
 
             if(window.appState.products.length) window.appState.products.sort((a,b) => b.createdAt - a.createdAt);
             if(window.appState.orders.length) window.appState.orders.sort((a,b) => b.createdAt - a.createdAt);
