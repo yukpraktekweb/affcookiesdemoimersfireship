@@ -3584,7 +3584,7 @@
         };
 
         try {
-            await apiCall('updateSystemConfig', payload);
+            await apiCall('saveSystemSettings', payload);
             window.showToast("System configuration updated!");
             window.appState.systemSettings = payload; // Update local state
         } catch (e) {
