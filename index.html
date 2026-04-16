@@ -354,6 +354,9 @@
                 <a href="#" onclick="navigate('templates')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-all text-sm font-semibold text-slate-600 dark:text-slate-300" data-target="templates">
                     <i class="ph ph-envelope-simple text-xl text-rose-500 group-[.active]:text-white transition-colors"></i> Notif Templates
                 </a>
+                <a href="#" onclick="navigate('system-settings')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-all text-sm font-semibold text-slate-600 dark:text-slate-300" data-target="system-settings">
+                    <i class="ph ph-cpu text-xl text-indigo-500 group-[.active]:text-white transition-colors"></i> System Settings
+                </a>
                 <a href="#" onclick="navigate('settings')" class="nav-link group flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/40 dark:hover:bg-slate-800/40 transition-all text-sm font-semibold text-slate-600 dark:text-slate-300" data-target="settings">
                     <i class="ph ph-gear text-xl text-slate-400 group-[.active]:text-white transition-colors"></i> Admin Settings
                 </a>
@@ -860,6 +863,57 @@
                                     </div>
                                 </div>
                             </div>
+                    <div id="content-system-settings" class="content-section hidden space-y-8 max-w-4xl">
+                        <div class="glass rounded-3xl shadow-xl p-8 border border-white/40 dark:border-slate-700/50">
+                            <h3 class="text-xl font-black text-slate-800 dark:text-white mb-6 border-b border-white/40 dark:border-slate-700/50 pb-4 flex items-center gap-2">
+                            <i class="ph ph-sliders text-brand"></i> Advanced System Control
+                        </h3>
+        
+                        <div class="space-y-6">
+                           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-5 bg-white/30 dark:bg-slate-800/30 rounded-2xl border border-white/40 dark:border-slate-700/50">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <i class="ph ph-hash-straight text-brand"></i> Mode Kode Unik
+                    </label>
+                    <select id="sysUniqueMode" class="w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all dark:text-white">
+                        <option value="TAMBAH">TAMBAH (Harga + Unik)</option>
+                        <option value="KURANG">KURANG (Harga - Unik)</option>
+                    </select>
+                </div>
+                <div class="p-5 bg-white/30 dark:bg-slate-800/30 rounded-2xl border border-white/40 dark:border-slate-700/50">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <i class="ph ph-arrows-out text-brand"></i> Maksimal Angka Unik
+                    </label>
+                    <input type="number" id="sysUniqueMax" placeholder="Cth: 500" class="w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-brand dark:text-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="p-5 bg-white/30 dark:bg-slate-800/30 rounded-2xl border border-white/40 dark:border-slate-700/50">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <i class="ph ph-lock-laminated text-brand"></i> Affiliate Lock Status
+                    </label>
+                    <select id="sysAffLock" class="w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-brand outline-none transition-all dark:text-white">
+                        <option value="TRUE">LOCKED (Kunci Referal Pertama)</option>
+                        <option value="FALSE">UNLOCKED (Bebas Ganti Referal)</option>
+                    </select>
+                </div>
+                <div class="p-5 bg-white/30 dark:bg-slate-800/30 rounded-2xl border border-white/40 dark:border-slate-700/50">
+                    <label class="block text-sm font-bold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
+                        <i class="ph ph-clock-countdown text-brand"></i> Cookie Expiry (Hari)
+                    </label>
+                    <input type="number" id="sysCookieDays" placeholder="Cth: 30" class="w-full px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-brand dark:text-white">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button onclick="window.saveSystemSettings()" id="btnSaveSys" class="bg-gradient-to-r from-brand to-purple-600 hover:from-brandHover hover:to-purple-700 text-white px-8 py-4 rounded-2xl font-black transition-all shadow-xl shadow-brand/30 w-full sm:w-auto">
+                    SIMPAN KONFIGURASI SISTEM
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
                             <!-- WA Gateway / Notification Settings -->
                             <div class="pt-6 border-t border-white/40 dark:border-slate-700/50">
@@ -1697,7 +1751,7 @@
                     `;
                 });
             }
-            
+            window.renderSystemSettings();
             window.showToast("Data berhasil dimuat!", "success");
         } catch (err) {
             console.error("Gagal memuat sebagian data:", err);
@@ -3474,7 +3528,6 @@
                 if(bn) bk.push({name: bn, no: e.querySelector('.b-no').value, owner: e.querySelector('.b-owner').value});
             }); 
             
-            // AMBIL DATA NOTIFIKASI (WA, EMAIL, TELEGRAM)
             const notifData = {
                 waProvider: document.getElementById('notifWaProvider')?.value || 'fonnte',
                 waToken: document.getElementById('notifWaToken')?.value || '',
@@ -3487,7 +3540,6 @@
 
             let img = f ? await window.compressImage(f, 400) : lu; 
             
-            // KIRIM SEMUA DATA KE GOOGLE SHEETS
             await apiCall('saveSettings', {
                 appName: n, 
                 primaryColor: c,
@@ -3503,32 +3555,61 @@
         } catch(e) { window.showToast(e.message, "error"); } 
     };
 
+    // --- LOGIKA BARU: SYSTEM SETTINGS (KONTROL PANEL) ---
+    window.renderSystemSettings = () => {
+        const data = window.appState.systemSettings || {};
+        if (document.getElementById('sysUniqueMode')) document.getElementById('sysUniqueMode').value = data.KODE_UNIK_MODE || 'KURANG';
+        if (document.getElementById('sysUniqueMax')) document.getElementById('sysUniqueMax').value = data.KODE_UNIK_MAX || '500';
+        if (document.getElementById('sysAffLock')) document.getElementById('sysAffLock').value = data.AFFILIATE_LOCK_STATUS || 'TRUE';
+        if (document.getElementById('sysCookieDays')) document.getElementById('sysCookieDays').value = data.AFFILIATE_COOKIE_DAYS || '30';
+    };
+
+    window.saveSystemSettings = async () => {
+        const btn = document.getElementById('btnSaveSys');
+        if (!btn) return;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Saving...';
+
+        const payload = {
+            KODE_UNIK_MODE: document.getElementById('sysUniqueMode').value,
+            KODE_UNIK_MAX: document.getElementById('sysUniqueMax').value,
+            AFFILIATE_LOCK_STATUS: document.getElementById('sysAffLock').value,
+            AFFILIATE_COOKIE_DAYS: document.getElementById('sysCookieDays').value
+        };
+
+        try {
+            await apiCall('updateSystemConfig', payload);
+            window.showToast("System configuration updated!");
+            window.appState.systemSettings = payload; // Update local state
+        } catch (e) {
+            window.showToast(e.message, "error");
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = 'SIMPAN KONFIGURASI SISTEM';
+        }
+    };
+    // -----------------------------------------------------
+
     window.applyLogo = (src) => { 
         const l=document.getElementById('appLogoSidebar'); 
         if(src){ if(l){l.src=src;l.classList.remove('hidden');} } else { if(l){l.src='';l.classList.add('hidden');} } 
     };
 
-    // FIXED: Menambahkan kembali fungsi initChart yang hilang sebelumnya
     window.initChart = () => {
         setTimeout(() => {
             const canvas = document.getElementById('salesChart');
-            // Pastikan elemen canvas ada dan user yang login adalah admin
             if(!canvas || !window.appState.user || window.appState.user.role !== 'admin') return;
-
             let existingChart = Chart.getChart(canvas);
             if (existingChart) existingChart.destroy();
-            
             const isDark = document.documentElement.classList.contains('dark');
             const gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)';
             const textColor = isDark ? '#cbd5e1' : '#64748b';
-
             new Chart(canvas.getContext('2d'), {
                 type: 'line',
                 data: {
                     labels: ['Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'],
                     datasets: [{
                         label: 'Revenue',
-                        // Mock data untuk tampilan grafik
                         data: [1200000, 1900000, 3000000, 5000000, 4200000, 6800000, 12450000], 
                         borderColor: getComputedStyle(document.documentElement).getPropertyValue('--brand-color').trim() || '#4f46e5',
                         backgroundColor: 'rgba(79, 70, 229, 0.1)',
@@ -3547,7 +3628,7 @@
             });
         }, 100);
     };
-
+    
 </script>
 </body>
 </html>
