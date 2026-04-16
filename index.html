@@ -3563,13 +3563,20 @@
 
     // --- LOGIKA BARU: SYSTEM SETTINGS (KONTROL PANEL) ---
     window.renderSystemSettings = () => {
-        const data = window.appState.systemSettings || {};
-        if (document.getElementById('sysUniqueMode')) document.getElementById('sysUniqueMode').value = data.KODE_UNIK_MODE || 'KURANG';
-        if (document.getElementById('sysUniqueMax')) document.getElementById('sysUniqueMax').value = data.KODE_UNIK_MAX || '500';
-        if (document.getElementById('sysAffLock')) document.getElementById('sysAffLock').value = data.AFFILIATE_LOCK_STATUS || 'TRUE';
-        if (document.getElementById('sysCookieDays')) document.getElementById('sysCookieDays').value = data.AFFILIATE_COOKIE_DAYS || '30';
-    };
-
+    const config = window.appState.systemSettings || {};
+    
+    const modeEl = document.getElementById('sysUniqueMode');
+    if (modeEl) modeEl.value = config.KODE_UNIK_MODE || 'KURANG';
+    
+    const maxEl = document.getElementById('sysUniqueMax');
+    if (maxEl) maxEl.value = config.KODE_UNIK_MAX || '500';
+    
+    const affLockEl = document.getElementById('sysAffLock');
+    if (affLockEl) affLockEl.value = config.AFFILIATE_LOCK || 'TRUE';
+    
+    const affCookieEl = document.getElementById('sysCookieDays');
+    if (affCookieEl) affCookieEl.value = config.AFFILIATE_COOKIE_DURATION || '30';
+};
     window.saveSystemSettings = async () => {
         const btn = document.getElementById('btnSaveSys');
         if (!btn) return;
@@ -3579,8 +3586,8 @@
         const payload = {
             KODE_UNIK_MODE: document.getElementById('sysUniqueMode').value,
             KODE_UNIK_MAX: document.getElementById('sysUniqueMax').value,
-            AFFILIATE_LOCK_STATUS: document.getElementById('sysAffLock').value,
-            AFFILIATE_COOKIE_DAYS: document.getElementById('sysCookieDays').value
+            AFFILIATE_LOCK: document.getElementById('sysAffLock').value,
+            AFFILIATE_COOKIE_DURATION: document.getElementById('sysCookieDays').value
         };
 
         try {
