@@ -3590,29 +3590,38 @@
     }
 };
     window.saveSystemSettings = async () => {
-        const btn = document.getElementById('btnSaveSys');
-        if (!btn) return;
+    const btn = document.getElementById('btnSaveSys'); // Pastikan tombol lo punya ID ini
+    if (btn) {
         btn.disabled = true;
         btn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Saving...';
+    }
 
-        const payload = {
-            KODE_UNIK_MODE: document.getElementById('sysUniqueMode').value,
-            KODE_UNIK_MAX: document.getElementById('sysUniqueMax').value,
-            AFFILIATE_LOCK: document.getElementById('sysAffLock').value,
-            AFFILIATE_COOKIE_DURATION: document.getElementById('sysCookieDays').value
-        };
+    // Payload harus menggunakan KEY yang sama dengan Kolom A di Google Sheet
+    const payload = {
+        KODE_UNIK_MODE: document.getElementById('sysUniqueMode').value,
+        KODE_UNIK_MAX: document.getElementById('sysUniqueMax').value,
+        AFFILIATE_LOCK: document.getElementById('sysAffLock').value,
+        AFFILIATE_COOKIE_DURATION: document.getElementById('sysCookieDays').value
+    };
 
-        try {
-            await apiCall('saveSystemSettings', payload);
-            window.showToast("System configuration updated!");
-            window.appState.systemSettings = payload; // Update local state
-        } catch (e) {
-            window.showToast(e.message, "error");
-        } finally {
+    try {
+        const res = await apiCall('saveSystemSettings', payload);
+        if (res.success) {
+            window.showToast("Konfigurasi sistem berhasil disimpan!", "success");
+            window.appState.systemSettings = payload; // Simpan ke state lokal
+        } else {
+            window.showToast(res.error || "Gagal menyimpan", "error");
+        }
+    } catch (e) {
+        window.showToast("Terjadi kesalahan koneksi", "error");
+        console.error(e);
+    } finally {
+        if (btn) {
             btn.disabled = false;
             btn.innerHTML = 'SIMPAN KONFIGURASI SISTEM';
         }
-    };
+    }
+};
     // -----------------------------------------------------
 
     window.applyLogo = (src) => { 
