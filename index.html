@@ -1671,7 +1671,7 @@
         try {
             window.showToast("Memuat data dari server...", "info");
             
-            const [prodRes, orderRes, coupRes, tmplRes, userRes, setRes] = await Promise.all([
+            const [prodRes, orderRes, coupRes, tmplRes, userRes, setRes, sysRes] = await Promise.all([
                 apiCall('getProducts'),
                 apiCall('getOrders'),
                 apiCall('getCoupons'),
