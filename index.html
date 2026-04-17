@@ -3283,23 +3283,25 @@
             document.getElementById('coDiscountRow').classList.add('hidden');
         } 
         
-        // --- LOGIKA HARGA 0 / GRATIS (JANGAN DIHAPUS) ---
+       // --- LOGIKA HARGA 0 / GRATIS (CLEAN VERSION) ---
         let t = 0;
-        let fee = 113; // Fee awal lo
+        let fee = 0; 
         let uniqueCode = u; 
         
+        // Jika harga 0 atau jadi 0 setelah diskon
         if (p.price === 0 || (p.price - d) <= 0) {
             fee = 0;
-            uniqueCode = 0;
+            uniqueCode = 0; // Paksa kode unik jadi nol
             t = 0;
         } else {
-            // Kalau berbayar, hitung total dengan mode TAMBAH/KURANG dari server
+            // Jika berbayar, hitung total dengan mode TAMBAH/KURANG
             let baseAfterDiscount = p.price - d;
             if (mode === "TAMBAH") {
                 t = baseAfterDiscount + uniqueCode;
             } else {
                 t = baseAfterDiscount - uniqueCode;
             }
+            // Proteksi jangan sampai totalnya minus karena pengurang unik
             if (t <= 0) t = 0;
         }
 
