@@ -3283,27 +3283,35 @@
             document.getElementById('coDiscountRow').classList.add('hidden');
         } 
         
-       // --- LOGIKA HARGA 0 / GRATIS (CLEAN VERSION) ---
+       // --- LOGIKA HARGA 0 / KODE UNIK (REPLACEMENT) ---
         let t = 0;
-        let fee = 0; 
         let uniqueCode = u; 
+        const feeLabel = document.querySelector('label[for="coFee"]') || { innerText: "" };
+        const feeRow = document.getElementById('coFee').closest('.flex'); // Ambil baris pembungkusnya
         
-        // Jika harga 0 atau jadi 0 setelah diskon
         if (p.price === 0 || (p.price - d) <= 0) {
-            fee = 0;
-            uniqueCode = 0; // Paksa kode unik jadi nol
+            uniqueCode = 0;
             t = 0;
+            // Sembunyikan baris kalau gratis biar gak aneh
+            if(feeRow) feeRow.classList.add('hidden');
         } else {
-            // Jika berbayar, hitung total dengan mode TAMBAH/KURANG
+            // Munculkan kembali dan ganti label jadi Kode Unik
+            if(feeRow) feeRow.classList.remove('hidden');
+            const labelElement = document.getElementById('coFee').previousElementSibling;
+            if(labelElement) labelElement.innerText = 'Kode Unik';
+
             let baseAfterDiscount = p.price - d;
             if (mode === "TAMBAH") {
                 t = baseAfterDiscount + uniqueCode;
             } else {
                 t = baseAfterDiscount - uniqueCode;
             }
-            // Proteksi jangan sampai totalnya minus karena pengurang unik
             if (t <= 0) t = 0;
         }
+
+        // Update nominalnya (TAMBAH/KURANG tetap tampil positif di UI agar user paham selisihnya)
+        document.getElementById('coFee').innerText = window.formatRp(uniqueCode);
+        document.getElementById('coTotal').innerText = window.formatRp(t);
 
         // Tampilkan Fee ke layar (Tetep gue tampilin sesuai kode asli lo)
         document.getElementById('coFee').innerText = fee === 0 ? 'Rp. 0' : `- Rp. ${fee}`;
