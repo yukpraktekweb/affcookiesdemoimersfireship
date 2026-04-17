@@ -3283,43 +3283,43 @@
             document.getElementById('coDiscountRow').classList.add('hidden');
         } 
         
-       // --- LOGIKA HARGA 0 / KODE UNIK (REPLACEMENT) ---
+       // --- LOGIKA HARGA 0 / KODE UNIK (FIXED & CLEAN) ---
         let t = 0;
         let uniqueCode = u; 
-        const feeLabel = document.querySelector('label[for="coFee"]') || { innerText: "" };
-        const feeRow = document.getElementById('coFee').closest('.flex'); // Ambil baris pembungkusnya
-        
-        if (p.price === 0 || (p.price - d) <= 0) {
-            uniqueCode = 0;
+        const feeRow = document.getElementById('coFee').closest('.flex'); 
+        const labelElement = document.getElementById('coFee').previousElementSibling;
+
+        // 1. Cek apakah produk Gratis (setelah diskon)
+        const isFree = (p.price === 0 || (p.price - d) <= 0);
+
+        if (isFree) {
             t = 0;
-            // Sembunyikan baris kalau gratis biar gak aneh
+            uniqueCode = 0;
             if(feeRow) feeRow.classList.add('hidden');
         } else {
-            // Munculkan kembali dan ganti label jadi Kode Unik
+            // Jika Berbayar
             if(feeRow) feeRow.classList.remove('hidden');
-            const labelElement = document.getElementById('coFee').previousElementSibling;
             if(labelElement) labelElement.innerText = 'Kode Unik';
 
             let baseAfterDiscount = p.price - d;
+            
+            // Hitung Total berdasarkan mode TAMBAH/KURANG
             if (mode === "TAMBAH") {
                 t = baseAfterDiscount + uniqueCode;
             } else {
                 t = baseAfterDiscount - uniqueCode;
             }
-            if (t <= 0) t = 0;
+            if (t < 0) t = 0;
         }
 
-        // Update nominalnya (TAMBAH/KURANG tetap tampil positif di UI agar user paham selisihnya)
-        document.getElementById('coFee').innerText = window.formatRp(uniqueCode);
-        document.getElementById('coTotal').innerText = window.formatRp(t);
+        // 2. RENDER NOMINAL KE UI
+        // Baris Kode Unik (Fee Row)
+        document.getElementById('coFee').innerText = isFree ? 'Rp 0' : window.formatRp(uniqueCode);
 
-        // Tampilkan Fee ke layar (Tetep gue tampilin sesuai kode asli lo)
-        document.getElementById('coFee').innerText = fee === 0 ? 'Rp. 0' : `- Rp. ${fee}`;
-
-        // Tampilkan Label Kode Unik (Elemen yang kita tambah di Part 1)
+        // Update Label Hint di bawah total (yang ada angka merahnya)
         const uniqueLabel = document.getElementById('coUniqueCodeLabel');
         if(uniqueLabel) {
-            if(uniqueCode > 0 && t > 0) {
+            if(!isFree && uniqueCode > 0) {
                 uniqueLabel.innerText = `*Sudah termasuk kode unik (${mode === 'TAMBAH' ? '+' : '-'}${uniqueCode})`;
                 uniqueLabel.classList.remove('hidden');
             } else {
@@ -3327,19 +3327,22 @@
             }
         }
 
-        // Format Angka Total ke Layar
+        // 3. RENDER TOTAL HARGA (ORDER DETAILS & STICKY BAR)
         if (t === 0) {
-            document.getElementById('coTotal').innerHTML = `Rp. 0`; 
-            document.getElementById('coTotalPay').innerHTML = `Rp. 0`; 
+            const zeroText = "Rp 0";
+            document.getElementById('coTotal').innerHTML = zeroText; 
+            if(document.getElementById('coTotalPay')) document.getElementById('coTotalPay').innerHTML = zeroText; 
         } else {
-            const ts = String(t).padStart(4, '0');
+            // Efek angka merah di 3 digit terakhir
+            const ts = String(Math.floor(t)).padStart(4, '0');
             const r = ts.slice(0, -3);
             const l = ts.slice(-3); 
             const formattedRest = new Intl.NumberFormat('id-ID').format(Number(r));
             
-            const finalHtml = `Rp. ${formattedRest}.<span class="text-red-500 dark:text-red-400 font-black">${l}</span>`;
+            const finalHtml = `Rp ${formattedRest}.<span class="text-red-500 dark:text-red-400 font-black">${l}</span>`;
+            
             document.getElementById('coTotal').innerHTML = finalHtml; 
-            document.getElementById('coTotalPay').innerHTML = finalHtml; 
+            if(document.getElementById('coTotalPay')) document.getElementById('coTotalPay').innerHTML = finalHtml;
         }
     };
 
