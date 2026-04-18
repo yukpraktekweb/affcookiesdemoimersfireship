@@ -2004,64 +2004,74 @@
         window.location.reload();
     };
 
-// --- NAVIGATION & UI LOGIC (FIXED) ---
-    window.navigate = (targetId) => {
-        // 1. Logic Sidebar Desktop (Kode Asli Lo)
-        document.querySelectorAll('.nav-link').forEach(link => {
-            if(link.dataset.target === targetId) {
-                link.classList.add('bg-white/40', 'dark:bg-slate-800/40', 'active');
-                link.classList.remove('bg-transparent');
-            } else {
-                link.classList.remove('bg-white/40', 'dark:bg-slate-800/40', 'active');
-                link.classList.add('bg-transparent');
-            }
-        });
+// --- NAVIGATION & UI LOGIC (FIXED & MOBILE READY) ---
+window.navigate = (targetId) => {
+    // 1. MUNCULKAN NAVBAR MOBILE (Penting: Biar gak hidden terus setelah login)
+    const mobileNav = document.getElementById('mobile-nav');
+    if (mobileNav) {
+        mobileNav.classList.remove('hidden');
+    }
 
-        // 2. Logic Mobile Bottom Nav (TAMBAHAN BIAR NYALA)
-        document.querySelectorAll('.mobile-nav-link').forEach(link => {
-            if(link.dataset.target === targetId) {
-                link.classList.add('active');
-                link.style.transform = "scale(1.1)"; // Efek pop-up dikit biar kerasa diklik
-            } else {
-                link.classList.remove('active');
-                link.style.transform = "scale(1)";
-            }
-        });
-
-        const titles = {
-            'dashboard': 'Dashboard Overview',
-            'products': 'Product Management',
-            'marketplace': 'Digital Marketplace',
-            'license': 'License Management',
-            'orders': 'Order Management',
-            'coupons': 'Kupon & Diskon',
-            'users': 'Users Directory',
-            'affiliate': 'Affiliate Center',
-            'templates': 'Notification Templates',
-            'broadcast': 'Marketing Broadcast',
-            'settings': 'Admin Settings',
-            'system-settings': 'Advanced System Control',
-            'profile': 'My Profile'
-        };
-        const pageTitleEl = document.getElementById('pageTitle');
-        if (pageTitleEl) pageTitleEl.innerText = titles[targetId] || 'Panel';
-
-        document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
-        const targetEl = document.getElementById('content-' + targetId);
-        if (targetEl) targetEl.classList.remove('hidden');
-
-        // --- INI KUNCINYA BIAR GAK BLANK ---
-        if (targetId === 'system-settings') {
-            if (typeof window.renderSystemSettings === 'function') {
-                window.renderSystemSettings();
-            }
+    // 2. Logic Sidebar Desktop (Update status Active)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        if(link.dataset.target === targetId) {
+            link.classList.add('bg-white/40', 'dark:bg-slate-800/40', 'active');
+            link.classList.remove('bg-transparent');
+        } else {
+            link.classList.remove('bg-white/40', 'dark:bg-slate-800/40', 'active');
+            link.classList.add('bg-transparent');
         }
+    });
 
-        // Auto close mobile menu sidebar jika sedang terbuka
-        if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
-            window.toggleMobileMenu();
+    // 3. Logic Mobile Bottom Nav (Update Icon & Glow)
+    document.querySelectorAll('.mobile-nav-link').forEach(link => {
+        if(link.dataset.target === targetId) {
+            link.classList.add('active');
+            link.style.transform = "scale(1.1)"; // Efek pop-up interaktif
+        } else {
+            link.classList.remove('active');
+            link.style.transform = "scale(1)";
         }
+    });
+
+    // 4. Update Judul Halaman
+    const titles = {
+        'dashboard': 'Dashboard Overview',
+        'products': 'Product Management',
+        'marketplace': 'Digital Marketplace',
+        'license': 'License Management',
+        'orders': 'Order Management',
+        'coupons': 'Kupon & Diskon',
+        'users': 'Users Directory',
+        'affiliate': 'Affiliate Center',
+        'templates': 'Notification Templates',
+        'broadcast': 'Marketing Broadcast',
+        'settings': 'Admin Settings',
+        'system-settings': 'Advanced System Control',
+        'profile': 'My Profile'
     };
+    
+    const pageTitleEl = document.getElementById('pageTitle');
+    if (pageTitleEl) pageTitleEl.innerText = titles[targetId] || 'Panel';
+
+    // 5. Switch Tampilan Section
+    document.querySelectorAll('.content-section').forEach(el => el.classList.add('hidden'));
+    const targetEl = document.getElementById('content-' + targetId);
+    if (targetEl) targetEl.classList.remove('hidden');
+
+    // 6. Fix Rendering System Settings (Agar tidak blank)
+    if (targetId === 'system-settings') {
+        if (typeof window.renderSystemSettings === 'function') {
+            window.renderSystemSettings();
+        }
+    }
+
+    // 7. Auto-Close Sidebar Mobile (Jika terbuka)
+    if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
+        window.toggleMobileMenu();
+    }
+};
+   
         // -----------------------------------
 
         if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
