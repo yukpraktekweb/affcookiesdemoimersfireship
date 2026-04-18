@@ -2004,9 +2004,8 @@
         window.location.reload();
     };
 
-// --- NAVIGATION & UI LOGIC (VERSI ANTI-MENTAL) ---
+// --- NAVIGATION & UI LOGIC (KEMBALI KE KODE ASLI LO + FIX AMAN) ---
 window.navigate = (targetId) => {
-    // 1. LOGIKA UTAMA (Jangan diganggu biar gak mental)
     document.querySelectorAll('.nav-link').forEach(link => {
         if(link.dataset.target === targetId) {
             link.classList.add('bg-white/40', 'dark:bg-slate-800/40', 'active');
@@ -2032,7 +2031,6 @@ window.navigate = (targetId) => {
         'system-settings': 'Advanced System Control',
         'profile': 'My Profile'
     };
-    
     const pageTitleEl = document.getElementById('pageTitle');
     if (pageTitleEl) pageTitleEl.innerText = titles[targetId] || 'Panel';
 
@@ -2040,45 +2038,22 @@ window.navigate = (targetId) => {
     const targetEl = document.getElementById('content-' + targetId);
     if (targetEl) targetEl.classList.remove('hidden');
 
+    // --- INI KUNCINYA BIAR GAK BLANK ---
     if (targetId === 'system-settings') {
         if (typeof window.renderSystemSettings === 'function') {
             window.renderSystemSettings();
         }
     }
 
-    // 2. LOGIKA MOBILE NAV (Ditaruh paling bawah & pakai proteksi IF)
-    try {
-        const mobileNav = document.getElementById('mobile-nav');
-        if (mobileNav) {
-            // Cek apakah sudah login (view-app tampil), baru munculin nav mobile
-            if (!document.getElementById('view-app').classList.contains('hidden')) {
-                mobileNav.classList.remove('hidden');
-            }
-
-            // Sinkronkan icon bawah
-            document.querySelectorAll('.mobile-nav-link').forEach(link => {
-                if(link.dataset.target === targetId) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-        }
-    } catch (e) {
-        console.log("Mobile nav skip: ", e);
+    // --- SATU BARIS PROTEKSI BIAR GAK MENTAL KE LOGIN ---
+    if (document.getElementById('mobile-nav') && !document.getElementById('view-app').classList.contains('hidden')) {
+        document.getElementById('mobile-nav').classList.remove('hidden');
+        // Update class active di icon bawah secara manual (Simple & Safe)
+        document.querySelectorAll('.mobile-nav-link').forEach(m => {
+            m.classList.toggle('active', m.dataset.target === targetId);
+        });
     }
-
-    // Auto-close sidebar mobile
-    if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
-        window.toggleMobileMenu();
-    }
-};   
-        // -----------------------------------
-
-        if(window.innerWidth < 768 && window.appState.isSidebarOpen) {
-            window.toggleMobileMenu();
-        }
-    };
+};
 
     window.toggleMobileMenu = () => {
         window.appState.isSidebarOpen = !window.appState.isSidebarOpen;
