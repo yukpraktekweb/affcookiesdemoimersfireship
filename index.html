@@ -1025,9 +1025,7 @@
                         <div class="flex items-center gap-3 mb-3">
                             <input type="url" id="prodImageUrl" placeholder="https://example.com/image.png" class="flex-1 px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-brand dark:text-white text-sm">
                         </div>
-                        <div class="flex items-center gap-3">
-                            <input type="file" id="prodImageFile" accept="image/*" class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand/10 file:text-brand hover:file:bg-brand/20 transition-all cursor-pointer">
-                        </div>
+                        
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -2260,15 +2258,14 @@
             const desc = document.getElementById('prodDesc')?.value || '';
             const accessHtml = document.getElementById('prodAccessHtml')?.value || '';
             const salesPageUrl = document.getElementById('prodSalesPage')?.value || '';
-            const salesPageHtml = document.getElementById('prodSalesPageHtml')?.value || ''
+            const salesPageHtml = document.getElementById('prodSalesPageHtml')?.value || '';
             const commissionType = document.getElementById('prodCommType')?.value || 'percent';
             const commissionValue = document.getElementById('prodCommValue')?.value || '';
             
+            // --- BAGIAN INI GUE FIX BIAR CUMA AMBIL URL SAJA ---
             let finalImageUrl = document.getElementById('prodImageUrl')?.value || '';
-            const prodImageFile = document.getElementById('prodImageFile')?.files?.[0];
-            if (prodImageFile) {
-                finalImageUrl = await window.compressImage(prodImageFile, 600);
-            }
+            // Logic prodImageFile (upload komputer) gue hapus total biar gak error reject
+            // --------------------------------------------------
             
             if (!title || document.getElementById('prodPrice').value === '') {
                 window.showToast("Judul dan Harga harus diisi (Ketik angka 0 jika gratis)", "error");
@@ -2361,6 +2358,7 @@
             const imgUrlInput = document.getElementById('prodImageUrl');
             if (imgUrlInput) imgUrlInput.value = product.imageUrl || '';
             
+            // Logic Input File dikosongkan agar tidak bentrok
             const imgFileInput = document.getElementById('prodImageFile');
             if (imgFileInput) imgFileInput.value = '';
             
@@ -2379,6 +2377,14 @@
                     product.lessons.forEach(l => window.addLessonField(l.title, l.url));
                 } else { window.addLessonField(); }
             }
+            
+            window.toggleProductFields();
+            const modal = document.getElementById('productModal');
+            if (modal) modal.classList.remove('hidden');
+        } catch (e) {
+            console.error("Error editing product: ", e);
+        }
+    };
             
             window.toggleProductFields();
 
