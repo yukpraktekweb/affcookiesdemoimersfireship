@@ -1025,7 +1025,9 @@
                         <div class="flex items-center gap-3 mb-3">
                             <input type="url" id="prodImageUrl" placeholder="https://example.com/image.png" class="flex-1 px-4 py-3 bg-white/50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-brand dark:text-white text-sm">
                         </div>
-                        
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="prodImageFile" accept="image/*" class="w-full text-sm text-slate-500 dark:text-slate-400 file:mr-4 file:py-2.5 file:px-5 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-brand/10 file:text-brand hover:file:bg-brand/20 transition-all cursor-pointer">
+                        </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -1463,7 +1465,7 @@
         return cleaned;
     };
 
-    window.compressImage = (file, maxWidth = 300) => { 
+    window.compressImage = (file, maxWidth = 400) => {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1482,16 +1484,7 @@
                     canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
-                    
-                    // Kompresi kualitas ke 0.5 agar aman masuk sel Google Sheet
-                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
-                    
-                    // Safety check: jika masih kepanjangan, paksa kompres lagi ke 0.2
-                    if (compressedBase64.length > 30000) {
-                        resolve(canvas.toDataURL('image/jpeg', 0.2));
-                    } else {
-                        resolve(compressedBase64);
-                    }
+                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
                 };
             };
         });
@@ -2258,15 +2251,18 @@
             const desc = document.getElementById('prodDesc')?.value || '';
             const accessHtml = document.getElementById('prodAccessHtml')?.value || '';
             const salesPageUrl = document.getElementById('prodSalesPage')?.value || '';
-            const salesPageHtml = document.getElementById('prodSalesPageHtml')?.value || '';
+            const salesPageHtml = document.getElementById('prodSalesPageHtml')?.value || ''
             const commissionType = document.getElementById('prodCommType')?.value || 'percent';
             const commissionValue = document.getElementById('prodCommValue')?.value || '';
             
-            // FOKUS: Hanya ambil URL dari input text
             let finalImageUrl = document.getElementById('prodImageUrl')?.value || '';
+            const prodImageFile = document.getElementById('prodImageFile')?.files?.[0];
+            if (prodImageFile) {
+                finalImageUrl = await window.compressImage(prodImageFile, 600);
+            }
             
             if (!title || document.getElementById('prodPrice').value === '') {
-                window.showToast("Judul dan Harga harus diisi", "error");
+                window.showToast("Judul dan Harga harus diisi (Ketik angka 0 jika gratis)", "error");
                 return;
             }
 
@@ -2308,7 +2304,7 @@
             await window.loadAllData();
             window.closeProductModal();
         } catch (error) {
-            window.showToast("Error simpan: " + error.message, "error");
+            window.showToast("Error menyimpan produk: " + error.message, "error");
         }
     };
 
@@ -2320,21 +2316,48 @@
                 return;
             }
 
-            if (document.getElementById('productModalTitle')) document.getElementById('productModalTitle').innerText = 'Edit Product';
-            if (document.getElementById('prodId')) document.getElementById('prodId').value = product.id;
-            if (document.getElementById('prodTitle')) document.getElementById('prodTitle').value = product.title;
-            if (document.getElementById('prodPrice')) document.getElementById('prodPrice').value = product.price;
-            if (document.getElementById('prodType')) document.getElementById('prodType').value = product.type;
-            if (document.getElementById('prodDesc')) document.getElementById('prodDesc').value = product.description || '';
-            if (document.getElementById('prodAccessHtml')) document.getElementById('prodAccessHtml').value = product.accessHtml || '';
-            if (document.getElementById('prodSalesPage')) document.getElementById('prodSalesPage').value = product.salesPageUrl || '';
-            if (document.getElementById('prodSalesPageHtml')) document.getElementById('prodSalesPageHtml').value = product.salesPageHtml || '';
-            if (document.getElementById('prodCommType')) document.getElementById('prodCommType').value = product.commissionType || 'percent';
-            if (document.getElementById('prodCommValue')) document.getElementById('prodCommValue').value = product.commissionValue || '';
-            if (document.getElementById('prodImageUrl')) document.getElementById('prodImageUrl').value = product.imageUrl || '';
+            const titleEl = document.getElementById('productModalTitle');
+            if (titleEl) titleEl.innerText = 'Edit Product';
+            
+            const prodIdEl = document.getElementById('prodId');
+            if (prodIdEl) prodIdEl.value = product.id;
+            
+            const titleInput = document.getElementById('prodTitle');
+            if (titleInput) titleInput.value = product.title;
+            
+            const priceInput = document.getElementById('prodPrice');
+            if (priceInput) priceInput.value = product.price;
+            
+            const typeInput = document.getElementById('prodType');
+            if (typeInput) typeInput.value = product.type;
+            
+            const descInput = document.getElementById('prodDesc');
+            if (descInput) descInput.value = product.description || '';
+            
+            const accessInput = document.getElementById('prodAccess');
+            if (accessInput) accessInput.value = product.accessHtml || '';
+            
+            const spInput = document.getElementById('prodSalesPage');
+            if (spInput) spInput.value = product.salesPageUrl || '';
+            
+            const spHtmlInput = document.getElementById('prodSalesPageHtml');
+            if (spHtmlInput) spHtmlInput.value = product.salesPageHtml || '';
+            
+            const commTypeInput = document.getElementById('prodCommType');
+            if (commTypeInput) commTypeInput.value = product.commissionType || 'percent';
+            
+            const commValInput = document.getElementById('prodCommValue');
+            if (commValInput) commValInput.value = product.commissionValue || '';
+            
+            const imgUrlInput = document.getElementById('prodImageUrl');
+            if (imgUrlInput) imgUrlInput.value = product.imageUrl || '';
+            
+            const imgFileInput = document.getElementById('prodImageFile');
+            if (imgFileInput) imgFileInput.value = '';
             
             const dlContainer = document.getElementById('downloadsContainer');
             if (dlContainer) dlContainer.innerHTML = '';
+            
             const lsContainer = document.getElementById('lessonsContainer');
             if (lsContainer) lsContainer.innerHTML = '';
 
@@ -2347,13 +2370,6 @@
                     product.lessons.forEach(l => window.addLessonField(l.title, l.url));
                 } else { window.addLessonField(); }
             }
-            
-            window.toggleProductFields();
-            if (document.getElementById('productModal')) document.getElementById('productModal').classList.remove('hidden');
-        } catch (e) {
-            console.error("Error editing: ", e);
-        }
-    };
             
             window.toggleProductFields();
 
