@@ -2262,13 +2262,11 @@
             const commissionType = document.getElementById('prodCommType')?.value || 'percent';
             const commissionValue = document.getElementById('prodCommValue')?.value || '';
             
-            // --- BAGIAN INI GUE FIX BIAR CUMA AMBIL URL SAJA ---
+            // FOKUS: Hanya ambil URL dari input text
             let finalImageUrl = document.getElementById('prodImageUrl')?.value || '';
-            // Logic prodImageFile (upload komputer) gue hapus total biar gak error reject
-            // --------------------------------------------------
             
             if (!title || document.getElementById('prodPrice').value === '') {
-                window.showToast("Judul dan Harga harus diisi (Ketik angka 0 jika gratis)", "error");
+                window.showToast("Judul dan Harga harus diisi", "error");
                 return;
             }
 
@@ -2310,7 +2308,7 @@
             await window.loadAllData();
             window.closeProductModal();
         } catch (error) {
-            window.showToast("Error menyimpan produk: " + error.message, "error");
+            window.showToast("Error simpan: " + error.message, "error");
         }
     };
 
@@ -2322,49 +2320,21 @@
                 return;
             }
 
-            const titleEl = document.getElementById('productModalTitle');
-            if (titleEl) titleEl.innerText = 'Edit Product';
-            
-            const prodIdEl = document.getElementById('prodId');
-            if (prodIdEl) prodIdEl.value = product.id;
-            
-            const titleInput = document.getElementById('prodTitle');
-            if (titleInput) titleInput.value = product.title;
-            
-            const priceInput = document.getElementById('prodPrice');
-            if (priceInput) priceInput.value = product.price;
-            
-            const typeInput = document.getElementById('prodType');
-            if (typeInput) typeInput.value = product.type;
-            
-            const descInput = document.getElementById('prodDesc');
-            if (descInput) descInput.value = product.description || '';
-            
-            const accessInput = document.getElementById('prodAccess');
-            if (accessInput) accessInput.value = product.accessHtml || '';
-            
-            const spInput = document.getElementById('prodSalesPage');
-            if (spInput) spInput.value = product.salesPageUrl || '';
-            
-            const spHtmlInput = document.getElementById('prodSalesPageHtml');
-            if (spHtmlInput) spHtmlInput.value = product.salesPageHtml || '';
-            
-            const commTypeInput = document.getElementById('prodCommType');
-            if (commTypeInput) commTypeInput.value = product.commissionType || 'percent';
-            
-            const commValInput = document.getElementById('prodCommValue');
-            if (commValInput) commValInput.value = product.commissionValue || '';
-            
-            const imgUrlInput = document.getElementById('prodImageUrl');
-            if (imgUrlInput) imgUrlInput.value = product.imageUrl || '';
-            
-            // Logic Input File dikosongkan agar tidak bentrok
-            const imgFileInput = document.getElementById('prodImageFile');
-            if (imgFileInput) imgFileInput.value = '';
+            if (document.getElementById('productModalTitle')) document.getElementById('productModalTitle').innerText = 'Edit Product';
+            if (document.getElementById('prodId')) document.getElementById('prodId').value = product.id;
+            if (document.getElementById('prodTitle')) document.getElementById('prodTitle').value = product.title;
+            if (document.getElementById('prodPrice')) document.getElementById('prodPrice').value = product.price;
+            if (document.getElementById('prodType')) document.getElementById('prodType').value = product.type;
+            if (document.getElementById('prodDesc')) document.getElementById('prodDesc').value = product.description || '';
+            if (document.getElementById('prodAccessHtml')) document.getElementById('prodAccessHtml').value = product.accessHtml || '';
+            if (document.getElementById('prodSalesPage')) document.getElementById('prodSalesPage').value = product.salesPageUrl || '';
+            if (document.getElementById('prodSalesPageHtml')) document.getElementById('prodSalesPageHtml').value = product.salesPageHtml || '';
+            if (document.getElementById('prodCommType')) document.getElementById('prodCommType').value = product.commissionType || 'percent';
+            if (document.getElementById('prodCommValue')) document.getElementById('prodCommValue').value = product.commissionValue || '';
+            if (document.getElementById('prodImageUrl')) document.getElementById('prodImageUrl').value = product.imageUrl || '';
             
             const dlContainer = document.getElementById('downloadsContainer');
             if (dlContainer) dlContainer.innerHTML = '';
-            
             const lsContainer = document.getElementById('lessonsContainer');
             if (lsContainer) lsContainer.innerHTML = '';
 
@@ -2379,10 +2349,9 @@
             }
             
             window.toggleProductFields();
-            const modal = document.getElementById('productModal');
-            if (modal) modal.classList.remove('hidden');
+            if (document.getElementById('productModal')) document.getElementById('productModal').classList.remove('hidden');
         } catch (e) {
-            console.error("Error editing product: ", e);
+            console.error("Error editing: ", e);
         }
     };
             
