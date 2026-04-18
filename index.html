@@ -1465,7 +1465,7 @@
         return cleaned;
     };
 
-    window.compressImage = (file, maxWidth = 400) => {
+    window.compressImage = (file, maxWidth = 300) => { 
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -1484,7 +1484,16 @@
                     canvas.height = h;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, w, h);
-                    resolve(canvas.toDataURL('image/jpeg', 0.7)); 
+                    
+                    // Kompresi kualitas ke 0.5 agar aman masuk sel Google Sheet
+                    const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+                    
+                    // Safety check: jika masih kepanjangan, paksa kompres lagi ke 0.2
+                    if (compressedBase64.length > 30000) {
+                        resolve(canvas.toDataURL('image/jpeg', 0.2));
+                    } else {
+                        resolve(compressedBase64);
+                    }
                 };
             };
         });
