@@ -486,7 +486,7 @@
                     <div class="glass border border-blue-200 dark:border-blue-900/50 p-4 rounded-2xl text-sm text-blue-800 dark:text-blue-200 flex items-start sm:items-center gap-3 shadow-sm relative overflow-hidden">
                         <div class="absolute inset-0 bg-blue-500/10 dark:bg-blue-500/20"></div>
                         <i class="ph ph-info text-2xl shrink-0 relative z-10 text-blue-500"></i>
-                        <p class="relative z-10"><strong>iMersFireShip System Active:</strong> Dibangun dengan AppScript & Vercel, bisa jalan tanpa domain & hosting mahal - tes cekout yang ada nilai rupiahnya pake email lain dan aktifkan sendri .</p>
+                        <p class="relative z-10"><strong>iMersFireShip System Active:</strong> Dibangun dengan AppScript & Vercel & Cloudflare, bisa jalan tanpa domain & hosting mahal .</p>
                     </div>
                     <div class="glass rounded-2xl overflow-hidden shadow-xl relative z-10">
                         <div class="overflow-x-auto">
@@ -512,7 +512,7 @@
                         <h3 class="text-2xl font-black text-slate-800 dark:text-white">My Marketplace</h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Katalog semua produk digital dan Course yang Anda jual.</p>
                     </div>
-                    <div id="marketplaceList" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div id="marketplaceList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     </div>
                     <!-- Single Product Access Viewer -->
                     <div id="productViewer" class="hidden glass rounded-3xl overflow-hidden flex flex-col relative h-[80vh] shadow-2xl">
@@ -3095,10 +3095,10 @@
 
             container.innerHTML += `
                 <div class="glass rounded-3xl overflow-hidden shadow-lg transition-all border border-white/40 dark:border-slate-700/50 flex flex-col">
-                    <div class="aspect-square w-full bg-gradient-to-br ${colorFrom} ${colorTo} flex items-center justify-center relative overflow-hidden shrink-0">${imageHtml}</div>
+                    <div class="h-40 bg-gradient-to-br ${colorFrom} ${colorTo} flex items-center justify-center relative overflow-hidden shrink-0">${imageHtml}</div>
                     <div class="p-6 flex-1 flex flex-col bg-white/20 dark:bg-slate-900/20 backdrop-blur-sm">
                         <span class="text-[10px] font-black ${isLms ? 'text-indigo-600 dark:text-indigo-400' : 'text-emerald-600 dark:text-emerald-400'} uppercase tracking-widest mb-2 block bg-white/50 dark:bg-slate-800/50 w-max px-2 py-1 rounded-md shadow-sm">${typeLabel}</span>
-                        <p class="text-[10px] text-slate-500 dark:text-slate-400 mb-4 line-clamp-2 flex-1 font-medium">${course.description || 'No description'}</p>
+                        <h3 class="font-black text-slate-800 dark:text-white mb-2 text-lg leading-tight">${course.title}</h3>
                         <p class="text-xs text-slate-500 dark:text-slate-400 mb-6 line-clamp-2 flex-1 font-medium">${course.description || 'No description'}</p>
                         <div class="mt-auto">${salesPageBtn}${buttonHtml}</div>
                     </div>
@@ -3390,6 +3390,8 @@
             const e = document.getElementById('coEmail').value.trim();
             const w = window.formatPhoneNumber(document.getElementById('coWA').value);
             const p = document.getElementById('coPassword').value;
+            const selectedRadio = document.querySelector('input[name="paymentMethod"]:checked');
+            const selectedMethod = selectedRadio ? selectedRadio.value : 'Bank Transfer';
             
             // Hitung ulang untuk pengiriman data ke Google Sheets
             const c = window.appState.currentCheckoutCoupon;
@@ -3420,7 +3422,7 @@
                 discountApplied: d,
                 uniqueCode: unique, 
                 totalPay: t,
-                paymentMethod: 'Bank Transfer',
+                paymentMethod: selectedMethod,
                 status: finalStatus,
                 userPasswordHash: window.appState.user ? window.appState.user.password : await window.hashPassword(p),
                 affiliateRef: localStorage.getItem('affiliateRef') || null
